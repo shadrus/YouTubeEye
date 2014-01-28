@@ -7,7 +7,7 @@ First of all, for using this script, you should install ruby gem terminal-notifi
 
 $ [sudo] gem install terminal-notifier
 
-Then you should edit models/api_req.py to change USER_NAME = ''. It need to use YouTube user name.
+Then you should edit config/config.py to change USER_NAME = ''. It needs to use YouTube user name.
 
 And start app by
 
