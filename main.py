@@ -7,7 +7,7 @@ import shelve
 from models.result import Result
 from os import path
 
-result = None
+result = []
 
 
 def get_youtube_json(uri):
