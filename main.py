@@ -1,10 +1,6 @@
-import time
-
 __author__ = 'Yury Krylov'
 from subprocess import call
-
 from models.api_req import ApiReq
-
 import urllib2
 import json
 import shelve
@@ -116,23 +112,16 @@ def main():
                 returned = get_Youtube_data(data.video_uri, wanted_keys)
                 if not returned:
                     return
-    print result
+    #print result
     data_from_youtube = result_counter(result)
     if path.isfile('eyedb.db'):
         notif_data = cmp_data(data_from_youtube)
-        print notif_data
         if notif_data.__str__() != "":
             show_notif(notif_data, channel_id)
-        else:
-            print "No new events"
     else:
         show_notif(data_from_youtube, channel_id)
     save_data_to_file(data_from_youtube)
 
 
 if __name__ == '__main__':
-    time.sleep(120)
-    while True:
-        result = []
-        main()
-        time.sleep(120)
+    main()
