@@ -1,4 +1,4 @@
-from project.config.config import Conf
+from config.config import Conf
 class ApiReq():
     def __init__(self):
         self.conf = Conf()
