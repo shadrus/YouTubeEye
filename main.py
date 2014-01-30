@@ -13,7 +13,7 @@ result = []
 def get_youtube_json(uri):
     req = urllib2.Request(uri)
     try:
-        response = urllib2.urlopen(req)
+        response = urllib2.urlopen(req, timeout=1000)
         return response.read()
     except urllib2.URLError:
         return None
@@ -62,7 +62,7 @@ def get_Youtube_data(uri, wanted_keys):
     if channel_stat != None:
         dic = json.loads(channel_stat)
         parceChannelinfo(dic, wanted_keys)
-        return True
+        return dic
     else:
         return False
 
@@ -100,20 +100,42 @@ def main():
         return
     channel_id = result[1]
     data.set_search_uri(channel_id)
-    wanted_keys = ['videoId']  # The keys you want
-    returned = get_Youtube_data(data.search_uri, wanted_keys)
+    wanted_keys = ['videoId', 'nextPageToken']  # The keys you want
+    #First search
+    def without_next_token():
+        return get_Youtube_data(data.search_uri, wanted_keys)
+
+    returned = without_next_token()
+    print returned
     if not returned:
         return
+    while type(returned) == dict:
+        if 'nextPageToken' in returned.keys():
+            data.set_search_uri(channel_id, returned['nextPageToken'])
+            returned = get_Youtube_data(data.search_uri, wanted_keys)
+            print "in while", returned
+        else:
+            break
+
+    else:
+            print "the end"
+
+
     wanted_keys = ['viewCount', 'likeCount', 'dislikeCount', 'commentCount']  # The keys you want
+
     for item in result:
+        print "in item", item
         for key, value in item.items():
             if key == 'videoId':
                 data.set_video_uri(value)
                 returned = get_Youtube_data(data.video_uri, wanted_keys)
+                print returned
                 if not returned:
+                    print "no return"
                     return
-    #print result
     data_from_youtube = result_counter(result)
+    print data_from_youtube
+
     if path.isfile('eyedb.db'):
         notif_data = cmp_data(data_from_youtube)
         if notif_data.__str__() != "":
